@@ -1,30 +1,30 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
+const {chromePort} = require(path.resolve(__dirname, 'config.js'));
 const preloadFile = fs.readFileSync(path.resolve(__dirname,'preloadOptions.js'), 'utf8');
 
-const args = [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-infobars',
-    '--window-position=0,0',
-    '--ignore-certifcate-errors',
-    '--ignore-certifcate-errors-spki-list',
-    '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36"'
-];
 
-const options = {
-    args,
-    headless: true,
-    ignoreHTTPSErrors: true
-};
 const alegroScraper = async (url) => {
-    const browser = await puppeteer.launch(options);
+    const response = await axios.get(`http://localhost:${chromePort}/json/version`);
+    const { webSocketDebuggerUrl } = response.data;
+    // const browser = await puppeteer.launch(options);
+    const browser =  await puppeteer.connect({browserWSEndpoint: webSocketDebuggerUrl });
     const page = await browser.newPage();
-    await page.goto(url,{waitUntil: 'networkidle2'});
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+        if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image'){
+            req.abort();
+        }
+        else {
+            req.continue();
+        }
+    });
+    await page.goto(url,{waitUntil: 'domcontentloaded'});
     const pageContent = await page.content();
     await page.close();
-    await browser.close();
+    // await browser.close();
     return  pageContent;
 };
 
