@@ -15,13 +15,13 @@ const args = [
 
 const options = {
     args,
-    headless: false,
+    headless: true,
     ignoreHTTPSErrors: true
 };
 const alegroScraper = async (url) => {
     const browser = await puppeteer.launch(options);
     const page = await browser.newPage();
-    await page.goto(url);
+    await page.goto(url,{waitUntil: 'networkidle2'});
     const pageContent = await page.content();
     await page.close();
     await browser.close();
