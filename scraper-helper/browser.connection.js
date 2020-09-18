@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const {chromePort} = require(path.resolve(__dirname, '../config.js'));
 const preloadFile = fs.readFileSync(path.resolve(__dirname, 'preloadOptions.js'), 'utf8');
+const randomUseragent = require('random-useragent');
+const userAgent = randomUseragent.getRandom();
 const args = [
     '--no-sandbox',
     '--remote-debugging-port=' + chromePort,
@@ -11,8 +13,10 @@ const args = [
     '--window-position=0,0',
     '--ignore-certifcate-errors',
     '--ignore-certifcate-errors-spki-list',
-    '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36"'
+    `--user-agent="${userAgent}"`
 ];
+console.log(args);
+
 const options = {
     args,
     headless: true,

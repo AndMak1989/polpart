@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const {chromePort} = require(path.resolve(__dirname, '../config.js'));
-
+const randomUseragent = require('random-useragent');
 
 const alegroScraper = async (url) => {
     try {
@@ -24,6 +24,7 @@ const alegroScraper = async (url) => {
                 req.abort();
             }
         });
+        await page.setUserAgent(randomUseragent.getRandom());
         await page.goto(url, {waitUntil: 'domcontentloaded',});
         const pageContent = await page.content();
         await page.close();
