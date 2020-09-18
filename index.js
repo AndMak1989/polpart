@@ -14,12 +14,13 @@ app.get('/', (req, res) => {
 });
 
 app.post('/scraper', async (req, res) => {
-    if(req.body.url){
-      const bodyHtml = await alegroScraper(req.body.url);
-      return res.send(bodyHtml);
-    }else {
+    if (req.body.url) {
+        const bodyHtml = await alegroScraper(req.body.url);
+        return res.send(bodyHtml);
+    } else {
         return res.send('No url param in request');
     }
 
 });
+
 app.listen(process.env.PORT || 5000);

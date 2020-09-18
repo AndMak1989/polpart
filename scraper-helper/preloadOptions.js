@@ -13,4 +13,4 @@ Object.defineProperty(navigator, 'plugins', {
     }
 });
 
-Object.defineProperty(navigator, 'webdriver', { get: () => false, });
+Object.defineProperty(navigator, 'webdriver', {get: () => false,});
